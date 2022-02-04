@@ -1,5 +1,6 @@
 -- Prison Life
 
+local LocalizationService = game:GetService("LocalizationService")
 local Players = game:GetService("Players")
 if game.PlaceId == 155615604 then
     local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
@@ -35,22 +36,6 @@ if game.PlaceId == 155615604 then
             module["AutoFire"] = true
         end
     end)
-
-    MainSection:NewToggle("Remove Doors", "Remove all doors", function()
-        if workspace:FindFirstChild("Doors") then
-            workspace.Doors.Parent = game.Lighting
-            else if game.Lighting:FindFirstChild("Doors") then
-                game.Lighting.Doors.Parent = workspace
-            end
-        end
-    end)
-
-    MainSection:NewToggle("Remove Fences", "Remove all Fences", function()
-        if workspace:FindFirstChild("Prison_Fences") then
-            workspace.Prison_Fences.Parent = game.Lighting
-            else game.Lighting.Prison_Fences.Parent = workspace
-        end
-    end)
     
     MainSection:NewButton("Arrest Criminal", "Arrest all criminal", function()
         local Player = game.Players.LocalPlayer
@@ -80,6 +65,149 @@ end)
 MainSection:NewButton("Super Punch", "One hit", function()
     mainRemotes = game.ReplicatedStorage meleeRemote = mainRemotes['meleeEvent'] mouse = game.Players.LocalPlayer:GetMouse() punching = false cooldown = false function punch() cooldown = true local part = Instance.new("Part", game.Players.LocalPlayer.Character) part.Transparency = 1 part.Size = Vector3.new(5, 2, 3) part.CanCollide = false local w1 = Instance.new("Weld", part) w1.Part0 = game.Players.LocalPlayer.Character.Torso w1.Part1 = part w1.C1 = CFrame.new(0,0,2) part.Touched:connect(function(hit) if game.Players:FindFirstChild(hit.Parent.Name) then local plr = game.Players:FindFirstChild(hit.Parent.Name) if plr.Name ~= game.Players.LocalPlayer.Name then part:Destroy() for i = 1,100 do meleeRemote:FireServer(plr) end end end end) wait(1) cooldown = false part:Destroy() end mouse.KeyDown:connect(function(key) if cooldown == false then if key:lower() == "f" then punch() end end end)
 end)
+
+    MainSection:NewButton("BaseBallBat", "Give Localplayer baseballbat", function()
+        local LocalPlayer = game.Players.LocalPlayer
+        local Character = LocalPlayer.Character
+            local Backpack = LocalPlayer.Backpack
+            local Humanoid = Character.Humanoid
+            if not Backpack:FindFirstChild("Bat") and not Character:FindFirstChild("Bat") then
+                local BaseBallBat = Instance.new("Tool", Backpack)
+                local Handle = Instance.new("Part", BaseBallBat)
+                BaseBallBat.GripPos = Vector3.new(0, -1.15, 0)
+                BaseBallBat.Name = "Bat"
+                Handle.Name = "Handle"
+                Handle.Size = Vector3.new(0.4, 5, 0.4)
+                local Animation =Instance.new("Animation", BaseBallBat)
+                Animation.AnimationId = "rbxassetid://218504594"
+                local Track = Humanoid:LoadAnimation(Animation)
+                local Cooldown = false
+                local Attacked = false
+                local Attacking = false
+                BaseBallBat.Equipped:Connect(function()
+                    BaseBallBat.Activated:Connect(function()
+                        if not Cooldown then
+                            Cooldown = true
+                            Attacking = true
+                            Track:Play()
+                            Handle.Touched:Connect(function(Hit)
+                                if Hit.Parent and Hit.Parent ~= game.Players.LocalPlayer and not Attacked and Attacking then
+                                    Attacked = true
+                                    for i = 1,15 do
+                                        game.ReplicatedStorage.meleeEvent:FireServer(game.Players[Hit.Parent.Name])
+    
+                                    end
+                                end
+                            end)
+                            wait(0.25)
+                            Cooldown = false
+                            Attacked = false
+                            Attacking = false
+                        end  
+                 end)
+            end)
+        end
+    end)
+
+    -- Player
+
+    local Player = Window:NewTab("Player")
+    local PlayerSection = Player:NewSection("Player")
+ 
+    PlayerSection:NewSlider("WalkSpeed", "Changes the walkspeed", 250, 16, function(v)
+        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = v
+    end)
+ 
+    PlayerSection:NewSlider("JumpPower", "Changes the jumppower", 250, 50, function(v)
+        game.Players.LocalPlayer.Character.Humanoid.JumpPower = v
+    end)
+
+    PlayerSection:NewButton("Btools", "Give localplayer btools", function()
+        local tool1   = Instance.new("HopperBin",game.Players.LocalPlayer.Backpack)
+	    tool1.BinType = "Hammer"
+    end)
+
+    local InfiniteJumpEnabled;
+    PlayerSection:NewToggle("Infinite Jump", "By toggling this you can jump infinitely", function(State)
+    InfiniteJumpEnabled = State
+
+    local Player = game:GetService("Players").LocalPlayer
+    game:GetService("UserInputService").JumpRequest:Connect(function()
+        if InfiniteJumpEnabled then
+            Player.Character:WaitForChild("Humanoid"):ChangeState("Jumping")
+        end
+    end)
+end)
+
+    PlayerSection:NewButton("Reset", "Fast respawn", function()
+        local A_1 = "\66\114\111\121\111\117\98\97\100\100"
+	    local Event = game:GetService("Workspace").Remote.loadchar
+	    Event:InvokeServer(A_1)
+    end)
+
+    PlayerSection:NewButton("Rejoin", "Rejoin the server", function()
+        local tpservice= game:GetService("TeleportService")
+	    local plr = game.Players.LocalPlayer
+	    tpservice:Teleport(game.PlaceId, plr)
+    end)
+
+       -- Remove Function
+
+       local RemoveFunction = Window:NewTab("Remove Function")
+       local RemoveFunctionSelection = RemoveFunction:NewSection("Remove Function")
+   
+   
+       RemoveFunctionSelection:NewToggle("Remove Prison Guard Outpost", "Remove prison guard outpost", function()
+           if workspace:FindFirstChild("Prison_Guard_Outpost") then
+               workspace.Prison_Guard_Outpost.Parent = game.Lighting
+               else game.Lighting.Prison_Guard_Outpost.Parent = game.Workspace
+           end
+       end)
+       
+       RemoveFunctionSelection:NewToggle("Remove Prison Cellblock", "Remove prison cellblock", function()
+           if workspace:FindFirstChild("Prison_Cellblock") then
+               workspace.Prison_Cellblock.Parent = game.Lighting
+               else game.Lighting.Prison_Cellblock.Parent = game.Workspace
+           end
+       end)
+   
+       RemoveFunctionSelection:NewToggle("Remove Prison Administration", "Remove prison administration", function()
+           if workspace:FindFirstChild("Prison_Administration") then
+               workspace.Prison_Administration.Parent = game.Lighting
+               else game.Lighting.Prison_Administration.Parent = game.Workspace
+           end
+       end)
+   
+       RemoveFunctionSelection:NewToggle("Remove Prison OuterWall", "Remove prison outerWall", function()
+           if workspace:FindFirstChild("Prison_OuterWall") then
+               workspace.Prison_OuterWall.Parent = game.Lighting
+               else game.Lighting.Prison_OuterWall.Parent = game.Workspace
+           end
+       end)
+
+       RemoveFunctionSelection:NewToggle("Remove Prison Cafeteria", "Remove prison cafeteria", function()
+        if workspace:FindFirstChild("Prison_Cafeteria") then
+            workspace.Prison_Cafeteria.Parent = game.Lighting
+            else game.Lighting.Prison_Cafeteria.Parent = game.Workspace
+        end
+    end)
+
+    RemoveFunctionSelection:NewToggle("Remove Doors", "Remove all doors", function()
+        if workspace:FindFirstChild("Doors") then
+            workspace.Doors.Parent = game.Lighting
+            else if game.Lighting:FindFirstChild("Doors") then
+                game.Lighting.Doors.Parent = workspace
+            end
+        end
+    end)
+
+    RemoveFunctionSelection:NewToggle("Remove Fences", "Remove all Fences", function()
+        if workspace:FindFirstChild("Prison_Fences") then
+            workspace.Prison_Fences.Parent = game.Lighting
+            else game.Lighting.Prison_Fences.Parent = workspace
+        end
+    end)
+   
 
     -- Function
 
@@ -122,90 +250,6 @@ end)
         end
     end)
 
-    -- Player
-
-    local Player = Window:NewTab("Player")
-    local PlayerSection = Player:NewSection("Player")
- 
-    PlayerSection:NewSlider("WalkSpeed", "Changes the walkspeed", 250, 16, function(v)
-        game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = v
-    end)
- 
-    PlayerSection:NewSlider("JumpPower", "Changes the jumppower", 250, 50, function(v)
-        game.Players.LocalPlayer.Character.Humanoid.JumpPower = v
-    end)
-
-    PlayerSection:NewButton("Btools", "Give localplayer btools", function()
-        local tool1   = Instance.new("HopperBin",game.Players.LocalPlayer.Backpack)
-	    tool1.BinType = "Hammer"
-    end)
-
-    local InfiniteJumpEnabled;
-    PlayerSection:NewToggle("Infinite Jump", "By toggling this you can jump infinitely", function(State)
-    InfiniteJumpEnabled = State
-
-    local Player = game:GetService("Players").LocalPlayer
-    game:GetService("UserInputService").JumpRequest:Connect(function()
-        if InfiniteJumpEnabled then
-            Player.Character:WaitForChild("Humanoid"):ChangeState("Jumping")
-        end
-    end)
-end)
-
-PlayerSection:NewButton("BaseBallBat", "Give Localplayer baseballbat", function()
-    local LocalPlayer = game.Players.LocalPlayer
-    local Character = LocalPlayer.Character
-		local Backpack = LocalPlayer.Backpack
-		local Humanoid = Character.Humanoid
-		if not Backpack:FindFirstChild("Bat") and not Character:FindFirstChild("Bat") then
-            local BaseBallBat = Instance.new("Tool", Backpack)
-			local Handle = Instance.new("Part", BaseBallBat)
-			BaseBallBat.GripPos = Vector3.new(0, -1.15, 0)
-			BaseBallBat.Name = "Bat"
-			Handle.Name = "Handle"
-			Handle.Size = Vector3.new(0.4, 5, 0.4)
-			local Animation =Instance.new("Animation", BaseBallBat)
-			Animation.AnimationId = "rbxassetid://218504594"
-			local Track = Humanoid:LoadAnimation(Animation)
-			local Cooldown = false
-			local Attacked = false
-			local Attacking = false
-            BaseBallBat.Equipped:Connect(function()
-                BaseBallBat.Activated:Connect(function()
-                    if not Cooldown then
-                        Cooldown = true
-						Attacking = true
-						Track:Play()
-                        Handle.Touched:Connect(function(Hit)
-                            if Hit.Parent and Hit.Parent ~= game.Players.LocalPlayer and not Attacked and Attacking then
-                                Attacked = true
-                                for i = 1,15 do
-                                    game.ReplicatedStorage.meleeEvent:FireServer(game.Players[Hit.Parent.Name])
-
-                                end
-                            end
-                        end)
-                        wait(0.25)
-						Cooldown = false
-						Attacked = false
-						Attacking = false
-                    end  
-             end)
-        end)
-    end
-end)
-
-    PlayerSection:NewButton("Reset", "Fast respawn", function()
-        local A_1 = "\66\114\111\121\111\117\98\97\100\100"
-	    local Event = game:GetService("Workspace").Remote.loadchar
-	    Event:InvokeServer(A_1)
-    end)
-
-    PlayerSection:NewButton("Rejoin", "Rejoin the server", function()
-        local tpservice= game:GetService("TeleportService")
-	    local plr = game.Players.LocalPlayer
-	    tpservice:Teleport(game.PlaceId, plr)
-    end)
 
     -- Change Team
 
@@ -274,6 +318,36 @@ end)
         game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(830.04302978516, 99.990005493164, 2327.0859375)
      end)
 
+     TeleportSection:NewButton("Car Spawn", "Teleport to car spawn", function()
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-200, 55, 1880)
+     end)
+
+     TeleportSection:NewButton("Shops", "Teleport to shops", function()
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-415, 55, 1750)
+     end)
+
+     TeleportSection:NewButton("Gas Station", "Teleport to gas station", function()
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-520, 55, 1660)
+     end)
+
+     TeleportSection:NewButton("Secret Spot", "Teleport to secret spot", function()
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-920, 95, 1990)
+     end)
+
+     TeleportSection:NewButton("Police Cars", "Teleport to police cars", function()
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(615, 100, 2515)
+     end)
+
+     TeleportSection:NewButton("Police Area", "Teleport to police area", function()
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(855, 100, 2297)
+     end)
+
+     TeleportSection:NewButton("Grocery Shop", "Teleport to grocery shop", function()
+        game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-415, 55, 1750)
+     end)
+     
+     --  Settings
+
      local Settings = Window:NewTab("Settings")
      local SettingsSelection = Settings:NewSection("Settings")
 
@@ -281,6 +355,12 @@ end)
          Library:ToggleUI()
      end)
 
+     -- Credits
+
+     local Credits = Window:NewTab("Credits")
+     CreditsSection = Credits:NewSection("Credits")
+
+     CreditsSection:NewLabel("Made by PainNonsense#")
 
      -- Flood Escape Classic
 
@@ -305,12 +385,21 @@ end)
             end)
         end)
 
+        -- Settings
+
         local Settings = Window:NewTab("Settings")
         SettingsSelection = Settings:NewSection("Settings")
     
         SettingsSelection:NewKeybind("KeybindText", "Change the Keybind", Enum.KeyCode.V, function()
             Library:ToggleUI()
         end)
+
+     -- Credits
+
+     local Credits = Window:NewTab("Credits")
+     CreditsSection = Credits:NewSection("Credits")
+
+     CreditsSection:NewLabel("Made by PainNonsense#")
         
 
      -- Work at a Pizza Place
@@ -585,12 +674,20 @@ end
         Library:ToggleUI()
     end)
 
+     -- Credits
+
+     local Credits = Window:NewTab("Credits")
+     CreditsSection = Credits:NewSection("Credits")
+
+     CreditsSection:NewLabel("Made by PainNonsense#")
 
 -- In Another Time
 
 elseif game.PlaceId == 5864786637 then
     local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
    local Window = Library.CreateLib("In Another Time (Solaris Hub)", "DarkTheme")
+
+   -- Items
 
    local Items = Window:NewTab("Items")
    local ItemsSection = Items:NewSection("Give Arrow")
@@ -599,6 +696,8 @@ elseif game.PlaceId == 5864786637 then
         local Event = game:GetService("ReplicatedStorage").ItemGiver.GiveArrow
         Event:FireServer()
     end)
+
+    -- Main (TP locations)
 
    local Main = Window:NewTab("Main")
    local MainSection = Main:NewSection("TP locations")
@@ -635,6 +734,8 @@ end)
     game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(-474.922791, -4.71304703, 1376.32361, 0.148592025, 1.02405728e-08, 0.988898575, -1.21302918e-07, 1, 7.87145815e-09, -0.988898575, -1.21125922e-07, 0.148592025)
 end)
 
+-- Player
+
 local Player = Window:NewTab("Player")
 local PlayerSection = Player:NewSection("Player")
 
@@ -650,6 +751,7 @@ PlayerSection:NewButton("Reset", "Resets", function()
     game.Players.LocalPlayer.Character.Humanoid.Health = 0
 end)
 
+-- Settings
 
 local Settings = Window:NewTab("Settings")
 local SettingsSelection = Settings:NewSection("Settings")
@@ -657,5 +759,12 @@ local SettingsSelection = Settings:NewSection("Settings")
 SettingsSelection:NewKeybind("KeybindText", "Change keybind", Enum.KeyCode.V, function()
     Library:ToggleUI()
 end)
+
+     -- Credits
+
+     local Credits = Window:NewTab("Credits")
+     CreditsSection = Credits:NewSection("Credits")
+
+     CreditsSection:NewLabel("Made by PainNonsense#")
 
 end
