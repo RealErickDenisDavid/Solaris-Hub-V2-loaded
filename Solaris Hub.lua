@@ -5,7 +5,7 @@ local Players = game:GetService("Players")
 if game.PlaceId == 155615604 then
     local Library = loadstring(game:HttpGet("https://raw.githubusercontent.com/xHeptc/Kavo-UI-Library/main/source.lua"))()
     local Window = Library.CreateLib("Prison Life (Solaris Hub)", "DarkTheme")
- 
+    
     -- Main
 
     local Main = Window:NewTab("Main")
@@ -109,7 +109,99 @@ end)
         end
     end)
 
-    -- Player
+    MainSection:NewLabel("Remove Building")
+
+    MainSection:NewToggle("Remove Prison Guard Outpost", "Remove prison guard outpost", function()
+        if workspace:FindFirstChild("Prison_Guard_Outpost") then
+            workspace.Prison_Guard_Outpost.Parent = game.Lighting
+            else game.Lighting.Prison_Guard_Outpost.Parent = game.Workspace
+        end
+    end)
+    
+    MainSection:NewToggle("Remove Prison Cellblock", "Remove prison cellblock", function()
+        if workspace:FindFirstChild("Prison_Cellblock") then
+            workspace.Prison_Cellblock.Parent = game.Lighting
+            else game.Lighting.Prison_Cellblock.Parent = game.Workspace
+        end
+    end)
+
+    MainSection:NewToggle("Remove Prison Administration", "Remove prison administration", function()
+        if workspace:FindFirstChild("Prison_Administration") then
+            workspace.Prison_Administration.Parent = game.Lighting
+            else game.Lighting.Prison_Administration.Parent = game.Workspace
+        end
+    end)
+
+    MainSection:NewToggle("Remove Prison OuterWall", "Remove prison outerWall", function()
+        if workspace:FindFirstChild("Prison_OuterWall") then
+            workspace.Prison_OuterWall.Parent = game.Lighting
+            else game.Lighting.Prison_OuterWall.Parent = game.Workspace
+        end
+    end)
+
+    MainSection:NewToggle("Remove Prison Cafeteria", "Remove prison cafeteria", function()
+     if workspace:FindFirstChild("Prison_Cafeteria") then
+         workspace.Prison_Cafeteria.Parent = game.Lighting
+         else game.Lighting.Prison_Cafeteria.Parent = game.Workspace
+     end
+ end)
+
+ MainSection:NewToggle("Remove Doors", "Remove all doors", function()
+     if workspace:FindFirstChild("Doors") then
+         workspace.Doors.Parent = game.Lighting
+         else if game.Lighting:FindFirstChild("Doors") then
+             game.Lighting.Doors.Parent = workspace
+         end
+     end
+ end)
+
+ MainSection:NewToggle("Remove Fences", "Remove all Fences", function()
+     if workspace:FindFirstChild("Prison_Fences") then
+         workspace.Prison_Fences.Parent = game.Lighting
+         else game.Lighting.Prison_Fences.Parent = workspace
+     end
+ end)
+
+    MainSection:NewLabel("Server")
+
+    MainSection:NewButton("Open Gate", "Gate open", function()
+     workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.buttons["Prison Gate"]["Prison Gate"])
+ end)
+
+ MainSection:NewButton("Crash Server", "Make server crash", function()
+     local Player = game.Players.LocalPlayer.Name
+     game.Workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver["Remington 870"].ITEMPICKUP)
+
+     for i,v in pairs(game.Players[Player].Backpack:GetChildren()) do
+         if v.name == "Remington 870" then
+             v.Parent = game.Players.LocalPlayer.Character
+         end
+     end
+         local Gun = "Remington 870"
+         Gun = game.Players[Player].Character[Gun]
+         game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):UnequipTools()
+             function FireGun(target)
+             coroutine.resume(coroutine.create(function()
+             local bulletTable = {}
+             table.insert(bulletTable, {
+             Hit = target,
+             Distance = 100,
+             Cframe = CFrame.new(0,1,1),
+             RayObject = Ray.new(Vector3.new(0.1,0.2), Vector3.new(0.3,0.4))
+             })
+             game.ReplicatedStorage.ShootEvent:FireServer(bulletTable, Gun)
+             wait()
+         end))
+     end
+             while game:GetService("RunService").Stepped:wait() do
+             for count = 0, 10, 10 do
+             FireGun()
+         end
+     end
+ end)   
+ 
+ 
+ -- Player
 
     local Player = Window:NewTab("Player")
     local PlayerSection = Player:NewSection("Player")
@@ -150,106 +242,6 @@ end)
 	    local plr = game.Players.LocalPlayer
 	    tpservice:Teleport(game.PlaceId, plr)
     end)
-
-       -- Remove Function
-
-       local RemoveFunction = Window:NewTab("Remove Function")
-       local RemoveFunctionSelection = RemoveFunction:NewSection("Remove Function")
-   
-   
-       RemoveFunctionSelection:NewToggle("Remove Prison Guard Outpost", "Remove prison guard outpost", function()
-           if workspace:FindFirstChild("Prison_Guard_Outpost") then
-               workspace.Prison_Guard_Outpost.Parent = game.Lighting
-               else game.Lighting.Prison_Guard_Outpost.Parent = game.Workspace
-           end
-       end)
-       
-       RemoveFunctionSelection:NewToggle("Remove Prison Cellblock", "Remove prison cellblock", function()
-           if workspace:FindFirstChild("Prison_Cellblock") then
-               workspace.Prison_Cellblock.Parent = game.Lighting
-               else game.Lighting.Prison_Cellblock.Parent = game.Workspace
-           end
-       end)
-   
-       RemoveFunctionSelection:NewToggle("Remove Prison Administration", "Remove prison administration", function()
-           if workspace:FindFirstChild("Prison_Administration") then
-               workspace.Prison_Administration.Parent = game.Lighting
-               else game.Lighting.Prison_Administration.Parent = game.Workspace
-           end
-       end)
-   
-       RemoveFunctionSelection:NewToggle("Remove Prison OuterWall", "Remove prison outerWall", function()
-           if workspace:FindFirstChild("Prison_OuterWall") then
-               workspace.Prison_OuterWall.Parent = game.Lighting
-               else game.Lighting.Prison_OuterWall.Parent = game.Workspace
-           end
-       end)
-
-       RemoveFunctionSelection:NewToggle("Remove Prison Cafeteria", "Remove prison cafeteria", function()
-        if workspace:FindFirstChild("Prison_Cafeteria") then
-            workspace.Prison_Cafeteria.Parent = game.Lighting
-            else game.Lighting.Prison_Cafeteria.Parent = game.Workspace
-        end
-    end)
-
-    RemoveFunctionSelection:NewToggle("Remove Doors", "Remove all doors", function()
-        if workspace:FindFirstChild("Doors") then
-            workspace.Doors.Parent = game.Lighting
-            else if game.Lighting:FindFirstChild("Doors") then
-                game.Lighting.Doors.Parent = workspace
-            end
-        end
-    end)
-
-    RemoveFunctionSelection:NewToggle("Remove Fences", "Remove all Fences", function()
-        if workspace:FindFirstChild("Prison_Fences") then
-            workspace.Prison_Fences.Parent = game.Lighting
-            else game.Lighting.Prison_Fences.Parent = workspace
-        end
-    end)
-   
-
-    -- Function
-
-    local Function = Window:NewTab("Function")
-    local FunctionSelection = Function:NewSection("function")
-
-    FunctionSelection:NewButton("Open Gate", "Gate open", function()
-        workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.buttons["Prison Gate"]["Prison Gate"])
-    end)
-
-    FunctionSelection:NewButton("Crash Server", "Make server crash", function()
-        local Player = game.Players.LocalPlayer.Name
-        game.Workspace.Remote.ItemHandler:InvokeServer(workspace.Prison_ITEMS.giver["Remington 870"].ITEMPICKUP)
-
-        for i,v in pairs(game.Players[Player].Backpack:GetChildren()) do
-            if v.name == "Remington 870" then
-                v.Parent = game.Players.LocalPlayer.Character
-            end
-        end
-            local Gun = "Remington 870"
-            Gun = game.Players[Player].Character[Gun]
-            game.Players.LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):UnequipTools()
-                function FireGun(target)
-                coroutine.resume(coroutine.create(function()
-                local bulletTable = {}
-                table.insert(bulletTable, {
-                Hit = target,
-                Distance = 100,
-                Cframe = CFrame.new(0,1,1),
-                RayObject = Ray.new(Vector3.new(0.1,0.2), Vector3.new(0.3,0.4))
-                })
-                game.ReplicatedStorage.ShootEvent:FireServer(bulletTable, Gun)
-                wait()
-            end))
-        end
-                while game:GetService("RunService").Stepped:wait() do
-                for count = 0, 10, 10 do
-                FireGun()
-            end
-        end
-    end)
-
 
     -- Change Team
 
@@ -360,7 +352,7 @@ end)
      local Credits = Window:NewTab("Credits")
      CreditsSection = Credits:NewSection("Credits")
 
-     CreditsSection:NewLabel("Made by PainNonsense#")
+     CreditsSection:NewLabel("Made by Real_PainNonsense & PainExploit Team")
 
      -- Flood Escape Classic
 
@@ -679,7 +671,7 @@ end
      local Credits = Window:NewTab("Credits")
      CreditsSection = Credits:NewSection("Credits")
 
-     CreditsSection:NewLabel("Made by PainNonsense#")
+     CreditsSection:NewLabel("Made by Real_PainNonsense & PainExploit Team#")
 
 -- In Another Time
 
@@ -765,6 +757,6 @@ end)
      local Credits = Window:NewTab("Credits")
      CreditsSection = Credits:NewSection("Credits")
 
-     CreditsSection:NewLabel("Made by PainNonsense#")
+     CreditsSection:NewLabel("Made by Real_PainNonsense & PainExploit Team")
 
 end
